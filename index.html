@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <style>
+
+      #navbar{
+        display: flex;
+        justify-content: right;
+        /* border: 1px solid red; */
+        height: 50px;
+        background-color: aquamarine;
+        align-items: center;
+        gap: 10px;
+      }
+     
+      #menu{
+
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        grid-template-rows: auto;
+        gap: 10px;
+        margin-top: 20px;
+        margin-left: 30px;
+        
+
+      }
+
+      #display_poduct{
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        height: auto;
+        width: 250px;
+        border: 1px solid black; 
+        padding: 10px;
+
+
+      }
+
+      #display_image{
+        
+      }
+      img{
+        height: 180px;
+        width: 180px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div id="navbar">
+      <!--Add navbar divs here-->
+      <div>Items</div>
+      <div>SignUp</div>
+      <div>logIn</div>
+      <div><a href="./bucket.html">bucket</a> </div>
+      <!-- Link to bucket.html -->
+      <div id="coffee_count">
+        <!--Show total number of coffee added to bucket here, do not add anything only Total count. Not even "Count - 5" but like this "5" -->
+      </div>
+    </div>
+
+    <div id="menu">
+      <!--Show coffee list here in grid format-->
+      <!-- add an add to bucket button to each item, give it HTML id as 'add_to_bucket' -->
+    </div>
+  </body>
+</html>
+<script>
+
+      let bucketData=JSON.parse(localStorage.getItem('coffee')) ||[]
+      document.getElementById('coffee_count').innerText=bucketData.length
+      async function getdata(){
+
+        let url=`https://masai-mock-api.herokuapp.com/coffee/menu`
+        
+        let res=await fetch(url)
+
+        let data= await res.json()
+      
+        console.log(data.menu.data)
+
+        append(data.menu.data)
+      
+      }
+
+      getdata()
+
+      
+
+      function append(data){
+
+        data.forEach(function(el,indx){
+
+          let div=document.createElement('div')
+          div.setAttribute('id','display_poduct')
+
+          let img_div=document.createElement('div')
+          img_div.setAttribute('id','display_image')
+          let img=document.createElement('img')
+              img.src=el.image
+
+              img_div.append(img)
+          let prod_div=document.createElement('div')
+          prod_div.setAttribute('id','display_prod')
+        
+          let h3=document.createElement('h3')
+              h3.innerText=el.title
+
+              let p=document.createElement('p')
+              p.innerText=el.price
+
+            let btn=document.createElement('button')
+                btn.setAttribute('id','add_to_bucket')
+               btn.addEventListener('click',function(){
+                 
+                addToBucket(indx)
+
+               })
+              
+
+
+                btn.innerText='Add To Bucket'
+
+              prod_div.append(h3,p,btn)
+
+              div.append(img_div,prod_div)  
+
+          document.getElementById('menu').append(div)    
+
+        })
+
+        function addToBucket(index){
+                
+          bucketData.push(data[index])
+
+          localStorage.setItem('coffee',JSON.stringify(bucketData))
+                     
+          }
+      
+      }
+      
+       
+
+      
+</script>
